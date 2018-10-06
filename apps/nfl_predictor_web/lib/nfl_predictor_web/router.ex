@@ -9,5 +9,6 @@ defmodule NflPredictorWeb.Router do
     pipe_through :api
 
     resources "/weather", WeatherController
+    resources "/games", GameController
   end
 end

@@ -452,4 +452,66 @@ defmodule NflPredictor.NflTest do
       assert %Ecto.Changeset{} = Nfl.change_weather(weather)
     end
   end
+
+  describe "games" do
+    alias NflPredictor.Nfl.Game
+
+    @valid_attrs %{end_time: ~N[2010-04-17 14:00:00.000000], start_time: ~N[2010-04-17 14:00:00.000000]}
+    @update_attrs %{end_time: ~N[2011-05-18 15:01:01.000000], start_time: ~N[2011-05-18 15:01:01.000000]}
+    @invalid_attrs %{end_time: nil, start_time: nil}
+
+    def game_fixture(attrs \\ %{}) do
+      {:ok, game} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Nfl.create_game()
+
+      game
+    end
+
+    test "list_games/0 returns all games" do
+      game = game_fixture()
+      assert Nfl.list_games() == [game]
+    end
+
+    test "get_game!/1 returns the game with given id" do
+      game = game_fixture()
+      assert Nfl.get_game!(game.id) == game
+    end
+
+    test "create_game/1 with valid data creates a game" do
+      assert {:ok, %Game{} = game} = Nfl.create_game(@valid_attrs)
+      assert game.end_time == ~N[2010-04-17 14:00:00.000000]
+      assert game.start_time == ~N[2010-04-17 14:00:00.000000]
+    end
+
+    test "create_game/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Nfl.create_game(@invalid_attrs)
+    end
+
+    test "update_game/2 with valid data updates the game" do
+      game = game_fixture()
+      assert {:ok, game} = Nfl.update_game(game, @update_attrs)
+      assert %Game{} = game
+      assert game.end_time == ~N[2011-05-18 15:01:01.000000]
+      assert game.start_time == ~N[2011-05-18 15:01:01.000000]
+    end
+
+    test "update_game/2 with invalid data returns error changeset" do
+      game = game_fixture()
+      assert {:error, %Ecto.Changeset{}} = Nfl.update_game(game, @invalid_attrs)
+      assert game == Nfl.get_game!(game.id)
+    end
+
+    test "delete_game/1 deletes the game" do
+      game = game_fixture()
+      assert {:ok, %Game{}} = Nfl.delete_game(game)
+      assert_raise Ecto.NoResultsError, fn -> Nfl.get_game!(game.id) end
+    end
+
+    test "change_game/1 returns a game changeset" do
+      game = game_fixture()
+      assert %Ecto.Changeset{} = Nfl.change_game(game)
+    end
+  end
 end
