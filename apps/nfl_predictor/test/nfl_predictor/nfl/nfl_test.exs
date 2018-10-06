@@ -138,4 +138,64 @@ defmodule NflPredictor.NflTest do
       assert %Ecto.Changeset{} = Nfl.change_conference(conference)
     end
   end
+
+  describe "divisions" do
+    alias NflPredictor.Nfl.Division
+
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    def division_fixture(attrs \\ %{}) do
+      {:ok, division} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Nfl.create_division()
+
+      division
+    end
+
+    test "list_divisions/0 returns all divisions" do
+      division = division_fixture()
+      assert Nfl.list_divisions() == [division]
+    end
+
+    test "get_division!/1 returns the division with given id" do
+      division = division_fixture()
+      assert Nfl.get_division!(division.id) == division
+    end
+
+    test "create_division/1 with valid data creates a division" do
+      assert {:ok, %Division{} = division} = Nfl.create_division(@valid_attrs)
+      assert division.name == "some name"
+    end
+
+    test "create_division/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Nfl.create_division(@invalid_attrs)
+    end
+
+    test "update_division/2 with valid data updates the division" do
+      division = division_fixture()
+      assert {:ok, division} = Nfl.update_division(division, @update_attrs)
+      assert %Division{} = division
+      assert division.name == "some updated name"
+    end
+
+    test "update_division/2 with invalid data returns error changeset" do
+      division = division_fixture()
+      assert {:error, %Ecto.Changeset{}} = Nfl.update_division(division, @invalid_attrs)
+      assert division == Nfl.get_division!(division.id)
+    end
+
+    test "delete_division/1 deletes the division" do
+      division = division_fixture()
+      assert {:ok, %Division{}} = Nfl.delete_division(division)
+      assert_raise Ecto.NoResultsError, fn -> Nfl.get_division!(division.id) end
+    end
+
+    test "change_division/1 returns a division changeset" do
+      division = division_fixture()
+      assert %Ecto.Changeset{} = Nfl.change_division(division)
+    end
+  end
 end
