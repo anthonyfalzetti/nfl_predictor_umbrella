@@ -260,4 +260,64 @@ defmodule NflPredictor.NflTest do
       assert %Ecto.Changeset{} = Nfl.change_team(team)
     end
   end
+
+  describe "seasons" do
+    alias NflPredictor.Nfl.Season
+
+    @valid_attrs %{year: 42}
+    @update_attrs %{year: 43}
+    @invalid_attrs %{year: nil}
+
+    def season_fixture(attrs \\ %{}) do
+      {:ok, season} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Nfl.create_season()
+
+      season
+    end
+
+    test "list_seasons/0 returns all seasons" do
+      season = season_fixture()
+      assert Nfl.list_seasons() == [season]
+    end
+
+    test "get_season!/1 returns the season with given id" do
+      season = season_fixture()
+      assert Nfl.get_season!(season.id) == season
+    end
+
+    test "create_season/1 with valid data creates a season" do
+      assert {:ok, %Season{} = season} = Nfl.create_season(@valid_attrs)
+      assert season.year == 42
+    end
+
+    test "create_season/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Nfl.create_season(@invalid_attrs)
+    end
+
+    test "update_season/2 with valid data updates the season" do
+      season = season_fixture()
+      assert {:ok, season} = Nfl.update_season(season, @update_attrs)
+      assert %Season{} = season
+      assert season.year == 43
+    end
+
+    test "update_season/2 with invalid data returns error changeset" do
+      season = season_fixture()
+      assert {:error, %Ecto.Changeset{}} = Nfl.update_season(season, @invalid_attrs)
+      assert season == Nfl.get_season!(season.id)
+    end
+
+    test "delete_season/1 deletes the season" do
+      season = season_fixture()
+      assert {:ok, %Season{}} = Nfl.delete_season(season)
+      assert_raise Ecto.NoResultsError, fn -> Nfl.get_season!(season.id) end
+    end
+
+    test "change_season/1 returns a season changeset" do
+      season = season_fixture()
+      assert %Ecto.Changeset{} = Nfl.change_season(season)
+    end
+  end
 end
