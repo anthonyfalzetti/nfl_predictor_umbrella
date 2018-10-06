@@ -380,4 +380,76 @@ defmodule NflPredictor.NflTest do
       assert %Ecto.Changeset{} = Nfl.change_week(week)
     end
   end
+
+  describe "weather" do
+    alias NflPredictor.Nfl.Weather
+
+    @valid_attrs %{precip_intensity: 120.5, precip_type: "some precip_type", temperature: 120.5, time: ~N[2010-04-17 14:00:00.000000], visibility: 120.5, wind_gust: 120.5, wind_speed: 120.5}
+    @update_attrs %{precip_intensity: 456.7, precip_type: "some updated precip_type", temperature: 456.7, time: ~N[2011-05-18 15:01:01.000000], visibility: 456.7, wind_gust: 456.7, wind_speed: 456.7}
+    @invalid_attrs %{precip_intensity: nil, precip_type: nil, temperature: nil, time: nil, visibility: nil, wind_gust: nil, wind_speed: nil}
+
+    def weather_fixture(attrs \\ %{}) do
+      {:ok, weather} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Nfl.create_weather()
+
+      weather
+    end
+
+    test "list_weather/0 returns all weather" do
+      weather = weather_fixture()
+      assert Nfl.list_weather() == [weather]
+    end
+
+    test "get_weather!/1 returns the weather with given id" do
+      weather = weather_fixture()
+      assert Nfl.get_weather!(weather.id) == weather
+    end
+
+    test "create_weather/1 with valid data creates a weather" do
+      assert {:ok, %Weather{} = weather} = Nfl.create_weather(@valid_attrs)
+      assert weather.precip_intensity == 120.5
+      assert weather.precip_type == "some precip_type"
+      assert weather.temperature == 120.5
+      assert weather.time == ~N[2010-04-17 14:00:00.000000]
+      assert weather.visibility == 120.5
+      assert weather.wind_gust == 120.5
+      assert weather.wind_speed == 120.5
+    end
+
+    test "create_weather/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Nfl.create_weather(@invalid_attrs)
+    end
+
+    test "update_weather/2 with valid data updates the weather" do
+      weather = weather_fixture()
+      assert {:ok, weather} = Nfl.update_weather(weather, @update_attrs)
+      assert %Weather{} = weather
+      assert weather.precip_intensity == 456.7
+      assert weather.precip_type == "some updated precip_type"
+      assert weather.temperature == 456.7
+      assert weather.time == ~N[2011-05-18 15:01:01.000000]
+      assert weather.visibility == 456.7
+      assert weather.wind_gust == 456.7
+      assert weather.wind_speed == 456.7
+    end
+
+    test "update_weather/2 with invalid data returns error changeset" do
+      weather = weather_fixture()
+      assert {:error, %Ecto.Changeset{}} = Nfl.update_weather(weather, @invalid_attrs)
+      assert weather == Nfl.get_weather!(weather.id)
+    end
+
+    test "delete_weather/1 deletes the weather" do
+      weather = weather_fixture()
+      assert {:ok, %Weather{}} = Nfl.delete_weather(weather)
+      assert_raise Ecto.NoResultsError, fn -> Nfl.get_weather!(weather.id) end
+    end
+
+    test "change_weather/1 returns a weather changeset" do
+      weather = weather_fixture()
+      assert %Ecto.Changeset{} = Nfl.change_weather(weather)
+    end
+  end
 end

@@ -7,5 +7,7 @@ defmodule NflPredictorWeb.Router do
 
   scope "/api", NflPredictorWeb do
     pipe_through :api
+
+    resources "/weather", WeatherController
   end
 end
