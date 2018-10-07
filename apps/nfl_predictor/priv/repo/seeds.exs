@@ -1,11 +1,12 @@
 defmodule NflPredictor.Seeds do
-  alias NflPredictor.Nfl.{Stadium, Conference, Division}
+  alias NflPredictor.Nfl.{Stadium, Conference, Division, Team}
   alias NflPredictor.Repo
 
   def seed do
     seed_stadiums
     seed_confrences
     seed_divisions
+    seed_teams
   end
 
   defp seed_stadiums do
@@ -27,13 +28,27 @@ defmodule NflPredictor.Seeds do
     %Division{name: "south"} |> Repo.insert!
   end
 
-  def store_stadium(row) do
-    formatted_row = format_row(row)
+  defp seed_teams do
+    headers = [:name, :stadium, :conference, :division, :home_field_advantage]
+    File.stream!("./priv/repo/seeds/csvs/teams.csv")
+    |> CSV.decode!(headers: headers, strip_fields: true)
+    |> Enum.each(&(store_team&1))
+  end
+
+  defp store_stadium(row) do
+    formatted_row = format_stadium_row(row)
     Stadium.changeset(%Stadium{}, formatted_row)
     |> Repo.insert!
   end
 
-  defp format_row(row) do
+  defp store_team(row) do
+    formatted_row = format_team_row(row)
+
+    Team.changeset(%Team{}, formatted_row)
+    |> Repo.insert!
+  end
+
+  defp format_stadium_row(row) do
     %{
       capacity: to_i(row.capacity),
       city: row.city,
@@ -44,6 +59,16 @@ defmodule NflPredictor.Seeds do
       playing_surface: row.playing_surface,
       roof_type: row.roof_type,
       state: row.state
+    }
+  end
+
+  defp format_team_row(row) do
+    %{
+      home_field_advantage: to_i(row.home_field_advantage),
+      name: row.name,
+      stadium_id: Repo.get_by!(Stadium, name: row.stadium).id,
+      conference_id: Repo.get_by!(Conference, name: row.conference).id,
+      division_id: Repo.get_by!(Division, name: row.division).id
     }
   end
 

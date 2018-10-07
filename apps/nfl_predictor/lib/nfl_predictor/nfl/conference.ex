@@ -1,10 +1,12 @@
 defmodule NflPredictor.Nfl.Conference do
   use Ecto.Schema
   import Ecto.Changeset
+  alias NflPredictor.Nfl
 
 
   schema "conferences" do
     field :name, :string
+    has_many :teams, Nfl.Team
 
     timestamps()
   end

@@ -2,6 +2,8 @@ defmodule NflPredictor.Nfl.Stadium do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias NflPredictor.Nfl
+
 
   schema "stadiums" do
     field :capacity, :integer
@@ -13,6 +15,7 @@ defmodule NflPredictor.Nfl.Stadium do
     field :playing_surface, :string
     field :roof_type, :string
     field :state, :string
+    has_many :teams, Nfl.Team
 
     timestamps()
   end

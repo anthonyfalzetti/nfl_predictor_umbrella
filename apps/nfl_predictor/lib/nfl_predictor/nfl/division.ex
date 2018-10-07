@@ -2,9 +2,12 @@ defmodule NflPredictor.Nfl.Division do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias NflPredictor.Nfl
+
 
   schema "divisions" do
     field :name, :string
+    has_many :teams, Nfl.Team
 
     timestamps()
   end
