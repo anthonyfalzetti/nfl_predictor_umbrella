@@ -15,10 +15,13 @@ defmodule NflPredictor.Nfl.Game do
     timestamps()
   end
 
+  @required_fields [:end_time, :start_time, :stadium_id, :home_team_id, :away_team_id, :week_id]
+  @optional_fields [:weather_id]
+
   @doc false
   def changeset(game, attrs) do
     game
-    |> cast(attrs, [:start_time, :end_time])
-    |> validate_required([:start_time, :end_time])
+    |> cast(attrs, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

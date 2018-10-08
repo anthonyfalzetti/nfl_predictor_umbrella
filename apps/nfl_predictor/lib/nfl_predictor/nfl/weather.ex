@@ -15,10 +15,14 @@ defmodule NflPredictor.Nfl.Weather do
     timestamps()
   end
 
+  @required_fields [:time, :temperature, :wind_speed, :wind_gust, :precip_type, :visibility, :precip_intensity]
+  @optional_fields []
+
+
   @doc false
   def changeset(weather, attrs) do
     weather
-    |> cast(attrs, [:time, :temperature, :wind_speed, :wind_gust, :precip_type, :visibility, :precip_intensity])
-    |> validate_required([:time, :temperature, :wind_speed, :wind_gust, :precip_type, :visibility, :precip_intensity])
+    |> cast(attrs, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

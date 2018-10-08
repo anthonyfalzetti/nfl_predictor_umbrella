@@ -12,10 +12,13 @@ defmodule NflPredictor.Nfl.Division do
     timestamps()
   end
 
+  @required_fields [:name]
+  @optional_fields []
+
   @doc false
   def changeset(division, attrs) do
     division
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

@@ -10,11 +10,13 @@ defmodule NflPredictor.Nfl.Conference do
 
     timestamps()
   end
+  @required_fields [:name]
+  @optional_fields []
 
   @doc false
   def changeset(conference, attrs) do
     conference
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

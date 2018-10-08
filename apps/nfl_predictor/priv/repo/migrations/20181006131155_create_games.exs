@@ -10,6 +10,8 @@ defmodule NflPredictor.Repo.Migrations.CreateGames do
       add :away_team_id, references(:games, on_delete: :nothing)
       add :weather_id, references(:weather, on_delete: :nothing)
       add :week_id, references(:weeks, on_delete: :nothing)
+      add :home_score, :integer
+      add :away_score, :integer
 
       timestamps()
     end

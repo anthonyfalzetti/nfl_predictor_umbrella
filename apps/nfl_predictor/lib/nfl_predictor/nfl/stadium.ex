@@ -20,10 +20,13 @@ defmodule NflPredictor.Nfl.Stadium do
     timestamps()
   end
 
+  @required_fields [:name, :capacity, :city, :state, :playing_surface, :roof_type, :elevation, :latitude, :longitude]
+  @optional_fields []
+
   @doc false
   def changeset(stadium, attrs) do
     stadium
-    |> cast(attrs, [:name, :capacity, :city, :state, :playing_surface, :roof_type, :elevation, :latitude, :longitude])
-    |> validate_required([:name, :capacity, :city, :state, :playing_surface, :roof_type, :elevation, :latitude, :longitude])
+    |> cast(attrs, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

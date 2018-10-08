@@ -14,10 +14,13 @@ defmodule NflPredictor.Nfl.Team do
     timestamps()
   end
 
+  @required_fields [:home_field_advantage, :name, :stadium_id, :conference_id, :division_id]
+  @optional_fields []
+
   @doc false
   def changeset(team, attrs) do
     team
-    |> cast(attrs, [:name, :home_field_advantage])
+    |> cast(attrs, @required_fields, @optional_fields)
     |> validate_required([:name, :home_field_advantage])
   end
 end
