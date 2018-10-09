@@ -14,11 +14,12 @@ defmodule NflPredictor.Nfl.Season do
 
   @required_fields [:year]
   @optional_fields []
+  @total_fields @required_fields ++ @optional_fields
 
   @doc false
   def changeset(season, attrs) do
     season
-    |> cast(attrs, @required_fields, @optional_fields)
+    |> cast(attrs, @total_fields)
     |> validate_required(@required_fields)
   end
 end

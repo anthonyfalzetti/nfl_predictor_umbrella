@@ -38,7 +38,8 @@ defmodule NflPredictor.Mixfile do
     [
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
-      {:csv, "~> 2.1"}
+      {:csv, "~> 2.1"},
+      {:timex, "~> 3.4"}
     ]
   end
 

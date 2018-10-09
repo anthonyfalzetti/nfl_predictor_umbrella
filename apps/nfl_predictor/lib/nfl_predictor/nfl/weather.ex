@@ -17,12 +17,12 @@ defmodule NflPredictor.Nfl.Weather do
 
   @required_fields [:time, :temperature, :wind_speed, :wind_gust, :precip_type, :visibility, :precip_intensity]
   @optional_fields []
-
+  @total_fields @required_fields ++ @optional_fields
 
   @doc false
   def changeset(weather, attrs) do
     weather
-    |> cast(attrs, @required_fields, @optional_fields)
+    |> cast(attrs, @total_fields)
     |> validate_required(@required_fields)
   end
 end

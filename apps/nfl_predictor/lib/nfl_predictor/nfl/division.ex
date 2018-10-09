@@ -7,6 +7,7 @@ defmodule NflPredictor.Nfl.Division do
 
   schema "divisions" do
     field :name, :string
+
     has_many :teams, Nfl.Team
 
     timestamps()
@@ -14,11 +15,12 @@ defmodule NflPredictor.Nfl.Division do
 
   @required_fields [:name]
   @optional_fields []
+  @total_fields @required_fields ++ @optional_fields
 
   @doc false
   def changeset(division, attrs) do
     division
-    |> cast(attrs, @required_fields, @optional_fields)
+    |> cast(attrs, @total_fields)
     |> validate_required(@required_fields)
   end
 end

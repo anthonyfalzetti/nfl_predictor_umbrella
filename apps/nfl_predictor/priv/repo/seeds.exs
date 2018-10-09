@@ -1,5 +1,5 @@
 defmodule NflPredictor.Seeds do
-  alias NflPredictor.Seeds.{Stadiums,Conferences,Divisions,Teams,Seasons,Weeks}
+  alias NflPredictor.Seeds.{Stadiums,Conferences,Divisions,Teams,Seasons,Weeks, Games}
 
   def seed do
     Stadiums.seed
@@ -8,6 +8,7 @@ defmodule NflPredictor.Seeds do
     Teams.seed
     Seasons.seed
     Weeks.seed
+    Games.seed
   end
 end
 
