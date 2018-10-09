@@ -11,6 +11,8 @@ defmodule NflPredictor.Nfl.Game do
     field :home_team_won, :boolean
     field :tie, :boolean
 
+    has_many :weather, Nfl.Weather
+
     belongs_to :home_team, Team, foreign_key: :home_team_id
     belongs_to :away_team, Team, foreign_key: :away_team_id
     belongs_to :stadiums, Stadium, foreign_key: :stadium_id

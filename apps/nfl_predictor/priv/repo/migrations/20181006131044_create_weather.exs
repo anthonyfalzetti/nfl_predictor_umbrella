@@ -10,6 +10,7 @@ defmodule NflPredictor.Repo.Migrations.CreateWeather do
       add :precip_type, :string
       add :visibility, :float
       add :precip_intensity, :float
+      add :game_id, references(:games, on_delete: :nothing)
 
       timestamps()
     end
