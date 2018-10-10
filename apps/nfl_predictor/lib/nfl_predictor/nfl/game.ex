@@ -1,7 +1,7 @@
 defmodule NflPredictor.Nfl.Game do
   use Ecto.Schema
   import Ecto.Changeset
-  alias NflPredictor.Nfl.{Team, Stadium, Week}
+  alias NflPredictor.Nfl.{Team, Stadium, Week, Weather}
 
   schema "games" do
     field :end_time, :naive_datetime
@@ -11,7 +11,7 @@ defmodule NflPredictor.Nfl.Game do
     field :home_team_won, :boolean
     field :tie, :boolean
 
-    has_many :weather, Nfl.Weather
+    has_many :weather, Weather
 
     belongs_to :home_team, Team, foreign_key: :home_team_id
     belongs_to :away_team, Team, foreign_key: :away_team_id

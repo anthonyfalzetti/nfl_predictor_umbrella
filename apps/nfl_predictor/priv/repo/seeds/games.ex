@@ -1,11 +1,11 @@
 defmodule NflPredictor.Seeds.Games do
   use Timex
-  alias NflPredictor.Nfl.{Game, Team, Season}
+  alias NflPredictor.Nfl.{Game, Team, Season, Stadium}
   alias NflPredictor.Repo
   import Ecto.Query
 
   def seed do
-    headers = [:week_id, :start_time, :home_team_name, :away_team_name, :home_team_score, :away_team_score]
+    headers = [:week_id, :start_time, :home_team_name, :away_team_name, :home_team_score, :away_team_score, :neutral_site]
 
     find_seed_files()
     |> Enum.each(fn(file) ->
@@ -32,7 +32,7 @@ defmodule NflPredictor.Seeds.Games do
     %{
       start_time: start_time,
       end_time: end_time(start_time),
-      stadium_id: home_team.stadium_id,
+      stadium_id: stadium(home_team.stadium_id, row.neutral_site),
       home_team_id: home_team.id,
       away_team_id: away_team(row).id,
       home_score: home_score(row),
@@ -49,6 +49,13 @@ defmodule NflPredictor.Seeds.Games do
     |> Timex.Timezone.convert("UTC")
   end
   defp end_time(start_time), do: Timex.shift(start_time, hours: 3)
+
+  defp stadium(home_id, "nil"), do: home_id
+  defp stadium(_home_id, stadium_name) do
+    Stadium
+    |> Repo.get_by!(name: stadium_name)
+    |> Map.get(:id)
+  end
 
   defp parse_home_team(%{home_team_name: home_team}), do: find_team(home_team)
   defp away_team(%{away_team_name: away_team}), do: find_team(away_team)
