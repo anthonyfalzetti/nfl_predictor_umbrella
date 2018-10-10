@@ -1,5 +1,6 @@
 defmodule NflPredictorWeb.GameControllerTest do
   use NflPredictorWeb.ConnCase
+  import NflPredictor.Factory
 
   alias NflPredictor.Nfl
   alias NflPredictor.Nfl.Game
@@ -9,7 +10,13 @@ defmodule NflPredictorWeb.GameControllerTest do
   @invalid_attrs %{end_time: nil, start_time: nil}
 
   def fixture(:game) do
-    {:ok, game} = Nfl.create_game(@create_attrs)
+    create_attrs = @create_attrs
+    |> Map.put(:stadium_id, insert(:stadium).id)
+    |> Map.put(:home_team_id, insert(:team).id)
+    |> Map.put(:away_team_id, insert(:team).id)
+    |> Map.put(:week_id, insert(:week).id)
+
+    {:ok, game} = Nfl.create_game(create_attrs)
     game
   end
 
@@ -26,14 +33,21 @@ defmodule NflPredictorWeb.GameControllerTest do
 
   describe "create game" do
     test "renders game when data is valid", %{conn: conn} do
-      conn = post conn, game_path(conn, :create), game: @create_attrs
+      create_attrs = @create_attrs
+      |> Map.put(:stadium_id, insert(:stadium).id)
+      |> Map.put(:home_team_id, insert(:team).id)
+      |> Map.put(:away_team_id, insert(:team).id)
+      |> Map.put(:week_id, insert(:week).id)
+
+      conn = post conn, game_path(conn, :create), game: create_attrs
+
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, game_path(conn, :show, id)
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
-        "end_time" => ~N[2010-04-17 14:00:00.000000],
-        "start_time" => ~N[2010-04-17 14:00:00.000000]}
+        "end_time" => "2010-04-17T14:00:00.000000",
+        "start_time" => "2010-04-17T14:00:00.000000"}
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -52,8 +66,8 @@ defmodule NflPredictorWeb.GameControllerTest do
       conn = get conn, game_path(conn, :show, id)
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
-        "end_time" => ~N[2011-05-18 15:01:01.000000],
-        "start_time" => ~N[2011-05-18 15:01:01.000000]}
+        "end_time" => "2011-05-18T15:01:01.000000",
+        "start_time" => "2011-05-18T15:01:01.000000"}
     end
 
     test "renders errors when data is invalid", %{conn: conn, game: game} do

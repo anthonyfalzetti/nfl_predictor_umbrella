@@ -1,5 +1,6 @@
 defmodule NflPredictor.NflTest do
   use NflPredictor.DataCase
+  import NflPredictor.Factory
 
   alias NflPredictor.Nfl
 
@@ -329,9 +330,12 @@ defmodule NflPredictor.NflTest do
     @invalid_attrs %{number: nil}
 
     def week_fixture(attrs \\ %{}) do
+      season = insert(:season)
+
       {:ok, week} =
         attrs
         |> Enum.into(@valid_attrs)
+        |> Map.put(:season_id, season.id)
         |> Nfl.create_week()
 
       week
@@ -348,7 +352,10 @@ defmodule NflPredictor.NflTest do
     end
 
     test "create_week/1 with valid data creates a week" do
-      assert {:ok, %Week{} = week} = Nfl.create_week(@valid_attrs)
+      valid_attrs = @valid_attrs
+      |> Map.put(:season_id, insert(:season).id)
+
+      assert {:ok, %Week{} = week} = Nfl.create_week(valid_attrs)
       assert week.number == 42
     end
 
@@ -389,9 +396,11 @@ defmodule NflPredictor.NflTest do
     @invalid_attrs %{precip_intensity: nil, precip_type: nil, temperature: nil, time: nil, visibility: nil, wind_gust: nil, wind_speed: nil}
 
     def weather_fixture(attrs \\ %{}) do
+      game = insert(:game)
       {:ok, weather} =
         attrs
         |> Enum.into(@valid_attrs)
+        |> Map.put(:game_id, game.id)
         |> Nfl.create_weather()
 
       weather
@@ -408,7 +417,10 @@ defmodule NflPredictor.NflTest do
     end
 
     test "create_weather/1 with valid data creates a weather" do
-      assert {:ok, %Weather{} = weather} = Nfl.create_weather(@valid_attrs)
+      valid_attrs = @valid_attrs
+      |> Map.put(:game_id, insert(:game).id)
+
+      assert {:ok, %Weather{} = weather} = Nfl.create_weather(valid_attrs)
       assert weather.precip_intensity == 120.5
       assert weather.precip_type == "some precip_type"
       assert weather.temperature == 120.5
@@ -456,15 +468,22 @@ defmodule NflPredictor.NflTest do
   describe "games" do
     alias NflPredictor.Nfl.Game
 
-    @valid_attrs %{end_time: ~N[2010-04-17 14:00:00.000000], start_time: ~N[2010-04-17 14:00:00.000000]}
-    @update_attrs %{end_time: ~N[2011-05-18 15:01:01.000000], start_time: ~N[2011-05-18 15:01:01.000000]}
+    @valid_attrs %{end_time: ~N[2010-04-17 14:00:00.000000], start_time: ~N[2010-04-17 14:00:00.000000], home_score: 21, away_score: 17, home_team_won: true, tie: false}
+    @update_attrs %{end_time: ~N[2011-05-18 15:01:01.000000], start_time: ~N[2011-05-18 15:01:01.000000], home_score: 21, away_score: 17, home_team_won: true, tie: false}
     @invalid_attrs %{end_time: nil, start_time: nil}
 
     def game_fixture(attrs \\ %{}) do
-      {:ok, game} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Nfl.create_game()
+      additional_params = %{
+        home_team_id: insert(:team).id,
+        away_team_id: insert(:team).id,
+        stadium_id: insert(:stadium).id,
+        week_id: insert(:week).id
+      }
+
+      {:ok, game} = attrs
+      |> Enum.into(@valid_attrs)
+      |> Map.merge(additional_params)
+      |> Nfl.create_game()
 
       game
     end
@@ -480,7 +499,13 @@ defmodule NflPredictor.NflTest do
     end
 
     test "create_game/1 with valid data creates a game" do
-      assert {:ok, %Game{} = game} = Nfl.create_game(@valid_attrs)
+      valid_attrs = @valid_attrs
+      |> Map.put(:stadium_id, insert(:stadium).id)
+      |> Map.put(:home_team_id, insert(:team).id)
+      |> Map.put(:away_team_id, insert(:team).id)
+      |> Map.put(:week_id, insert(:week).id)
+
+      assert {:ok, %Game{} = game} = Nfl.create_game(valid_attrs)
       assert game.end_time == ~N[2010-04-17 14:00:00.000000]
       assert game.start_time == ~N[2010-04-17 14:00:00.000000]
     end

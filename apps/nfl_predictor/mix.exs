@@ -39,7 +39,8 @@ defmodule NflPredictor.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:csv, "~> 2.1"},
-      {:timex, "~> 3.4"}
+      {:timex, "~> 3.4"},
+      {:ex_machina, "~> 2.2"}
     ]
   end
 
@@ -53,7 +54,7 @@ defmodule NflPredictor.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "test"]
+      "test": ["ecto.drop", "ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

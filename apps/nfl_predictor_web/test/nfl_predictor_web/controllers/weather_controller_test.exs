@@ -1,5 +1,6 @@
 defmodule NflPredictorWeb.WeatherControllerTest do
   use NflPredictorWeb.ConnCase
+  import NflPredictor.Factory
 
   alias NflPredictor.Nfl
   alias NflPredictor.Nfl.Weather
@@ -9,7 +10,10 @@ defmodule NflPredictorWeb.WeatherControllerTest do
   @invalid_attrs %{precip_intensity: nil, precip_type: nil, temperature: nil, time: nil, visibility: nil, wind_gust: nil, wind_speed: nil}
 
   def fixture(:weather) do
-    {:ok, weather} = Nfl.create_weather(@create_attrs)
+    create_attrs = @create_attrs
+    |> Map.put(:game_id, insert(:game).id)
+
+    {:ok, weather} = Nfl.create_weather(create_attrs)
     weather
   end
 
@@ -26,7 +30,10 @@ defmodule NflPredictorWeb.WeatherControllerTest do
 
   describe "create weather" do
     test "renders weather when data is valid", %{conn: conn} do
-      conn = post conn, weather_path(conn, :create), weather: @create_attrs
+      create_attrs = @create_attrs
+      |> Map.put(:game_id, insert(:game).id)
+
+      conn = post conn, weather_path(conn, :create), weather: create_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, weather_path(conn, :show, id)
@@ -35,7 +42,7 @@ defmodule NflPredictorWeb.WeatherControllerTest do
         "precip_intensity" => 120.5,
         "precip_type" => "some precip_type",
         "temperature" => 120.5,
-        "time" => ~N[2010-04-17 14:00:00.000000],
+        "time" => "2010-04-17T14:00:00.000000",
         "visibility" => 120.5,
         "wind_gust" => 120.5,
         "wind_speed" => 120.5}
@@ -60,7 +67,7 @@ defmodule NflPredictorWeb.WeatherControllerTest do
         "precip_intensity" => 456.7,
         "precip_type" => "some updated precip_type",
         "temperature" => 456.7,
-        "time" => ~N[2011-05-18 15:01:01.000000],
+        "time" => "2011-05-18T15:01:01.000000",
         "visibility" => 456.7,
         "wind_gust" => 456.7,
         "wind_speed" => 456.7}
